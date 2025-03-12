@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Clicker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #484647; /* Fond noir */
+            color: #ffffff; /* Texte en blanc */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Pleine hauteur de l'écran */
+        }
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        #score {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #cookie {
+            font-size: 200px; /* Taille du cookie */
+            cursor: pointer;
+            user-select: none; /* Empêcher la sélection du texte */
+            transition: transform 0.1s; /* Animation au clic */
+        }
+        #cookie:active {
+            transform: scale(1.1); /* Effet de zoom au clic */
+        }
+        #reset, #open-shop {
+            font-size: 20px;
+            padding: 15px 30px;
+            margin: 10px;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        #reset {
+            background-color: #FF5733;
+        }
+        #open-shop {
+            background-color: #3498db;
+        }
+        #reset:active, #open-shop:active {
+            transform: scale(1.1);
+        }
+
+    </style>
+</head>
+<body>
+         <!-- Bouton pour retourner au jeu -->
+         <button id="back-button" onclick="window.location.href='index.html'">Retour au Jeu</button>
+    <h1> ⚠️ Le classement est actuellement indisponible ⚠️ </h1>
+    </script>
+</body>
+</html>
