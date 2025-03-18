@@ -21,5 +21,18 @@ cabal.project.local
 cabal.project.local~
 .HTF/
 .ghc.environment.*
+<<<<<<< HEAD
 node_modules/
+<<<<<<< HEAD
 /data/cookie_clicker.db
+=======
+.env
+*.db
+node_modules/
+ma_base_de_donnees.db
+*.db
+*.db
+>>>>>>> f7c84045a2a7960a3909cf659144fd79794b3083
+=======
+/data/database.db
+>>>>>>> b16f07a2455872d83ea4d7251759b93dd5779e4e

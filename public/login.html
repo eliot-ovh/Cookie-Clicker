@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion et Inscription</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        input {
+            padding: 12px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: background 0.3s ease;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        input:focus {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #2575fc;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background: #1b5fd9;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .success {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
+
+        .error {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bienvenue</h1>
+
+        <div id="formulaire">
+            <h2>Inscription</h2>
+            <form id="formInscription">
+                <label for="nom_utilisateur">Nom d'utilisateur :</label>
+                <input type="text" id="nom_utilisateur" name="nom_utilisateur" placeholder="Entrez votre pseudo" required>
+                <label for="mot_de_passe">Mot de passe :</label>
+                <input type="password" id="mot_de_passe" name="mot_de_passe" placeholder="Entrez votre mot de passe" required>
+                <button type="submit">S'inscrire</button>
+            </form>
+
+            <h2>Connexion</h2>
+            <form id="formConnexion">
+                <label for="nom_utilisateur_connexion">Nom d'utilisateur :</label>
+                <input type="text" id="nom_utilisateur_connexion" name="nom_utilisateur" placeholder="Entrez votre pseudo" required>
+                <label for="mot_de_passe_connexion">Mot de passe :</label>
+                <input type="password" id="mot_de_passe_connexion" name="mot_de_passe" placeholder="Entrez votre mot de passe" required>
+                <button type="submit">Se connecter</button>
+            </form>
+        </div>
+
+        <div id="message"></div>
+    </div>
+
+    <script>
+        // Fonction pour afficher un message
+        function afficherMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = message;
+            messageDiv.className = type; // Ajouter une classe pour le style
+        }
+
+        // Gérer l'inscription
+        document.getElementById('formInscription').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const response = await fetch('/inscription', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.fromEntries(formData)),
+            });
+            const result = await response.json();
+            afficherMessage(result.message, response.ok ? 'success' : 'error');
+        });
+
+        // Gérer la connexion
+        document.getElementById('formConnexion').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const response = await fetch('/connexion', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.fromEntries(formData)),
+            });
+            const result = await response.json();
+            if (response.ok) {
+                // Rediriger vers index.html après une connexion réussie
+                window.location.href = 'index.html';
+            } else {
+                afficherMessage(result.message, 'error');
+            }
+        });
+    </script>
+</body>
+</html>
