@@ -1,38 +1,59 @@
-dist
-dist-*
-cabal-dev
-*.o
-*.hi
-*.hie
-*.chi
-*.chs.h
-*.dyn_o
-*.dyn_hi
-.hpc
-.hsenv
-.cabal-sandbox/
-cabal.sandbox.config
-*.prof
-*.aux
-*.hp
-*.eventlog
-.stack-work/
-cabal.project.local
-cabal.project.local~
-.HTF/
-.ghc.environment.*
-<<<<<<< HEAD
+# 📦 Node.js dependencies
 node_modules/
-<<<<<<< HEAD
-/data/cookie_clicker.db
-=======
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# 🖥 Éditeurs et Environnements de Dev
+.vscode/
+.idea/
+*.code-workspace
+
+# 🏗 Build files
+dist/
+build/
+tmp/
+out/
+coverage/
 .env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# 🗑️ Logs & Debugging
+logs/
+*.log
+debug.log
+*.bak
+*.swp
+*.swo
+
+# 📁 OS Files (Mac, Windows, Linux)
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.~lock
+
+# 🗃️ Bases de données et fichiers temporaires
+*.sqlite
+*.sqlite3
 *.db
-node_modules/
-ma_base_de_donnees.db
-*.db
-*.db
->>>>>>> f7c84045a2a7960a3909cf659144fd79794b3083
-=======
-/data/database.db
->>>>>>> b16f07a2455872d83ea4d7251759b93dd5779e4e
+*.db-wal
+*.db-shm
+*.mdb
+*.accdb
+
+# 🔥 Cache files
+.cache/
+.npm/
+.terraform/
+.pnp/
+.pnp.js
+node_repl_history
