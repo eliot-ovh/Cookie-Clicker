@@ -3,39 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
     <title>Cookie Clicker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-=======
-    <title>Classement</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
->>>>>>> f7c84045a2a7960a3909cf659144fd79794b3083
             background-color: #484647; /* Fond noir */
             color: #ffffff; /* Texte en blanc */
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
-<<<<<<< HEAD
             justify-content: center;
             align-items: center;
             height: 100vh; /* Pleine hauteur de l'écran */
-=======
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
->>>>>>> f7c84045a2a7960a3909cf659144fd79794b3083
         }
         h1 {
             font-size: 48px;
             margin-bottom: 20px;
         }
-<<<<<<< HEAD
         #score {
             font-size: 24px;
             margin-bottom: 20px;
@@ -75,95 +61,6 @@
          <!-- Bouton pour retourner au jeu -->
          <button id="back-button" onclick="window.location.href='index.html'">Retour au Jeu</button>
     <h1> ⚠️ Le classement est actuellement indisponible ⚠️ </h1>
-=======
-        #classement-table {
-            width: 80%;
-            max-width: 600px;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        #classement-table th, #classement-table td {
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #ffffff;
-        }
-        #classement-table th {
-            background-color: #3a775b;
-        }
-        #classement-table tr:nth-child(even) {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        #classement-table tr:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-        #back-button {
-            font-size: 20px;
-            padding: 15px 30px;
-            margin: 20px;
-            color: white;
-            background-color: #FF5733;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-    <h1>Classement - ⚠️ Dev en cours ⚠️</h1>
-
-    <!-- Tableau de classement -->
-    <table id="classement-table">
-        <thead>
-            <tr>
-                <th>Position</th>
-                <th>Pseudo</th>
-                <th>Cookies</th>
-            </tr>
-        </thead>
-        <tbody id="classement-body">
-            <!-- Les lignes du classement seront ajoutées ici dynamiquement -->
-        </tbody>
-    </table>
-
-    <!-- Bouton pour retourner à l'index -->
-    <button id="back-button" onclick="window.location.href='index.html'">Retour</button>
-
-    <script>
-        // Fonction pour charger le classement
-        async function loadClassement() {
-            const response = await fetch("/classement");
-            const data = await response.json();
-
-            if (data.classement && data.classement.length > 0) {
-                const classementBody = document.getElementById("classement-body");
-                classementBody.innerHTML = ""; // Vider le tableau avant de le remplir
-
-                // Ajouter chaque joueur au tableau
-                data.classement.forEach((joueur, index) => {
-                    const row = document.createElement("tr");
-
-                    const positionCell = document.createElement("td");
-                    positionCell.textContent = index + 1; // Position (1, 2, 3, ...)
-                    row.appendChild(positionCell);
-
-                    const pseudoCell = document.createElement("td");
-                    pseudoCell.textContent = joueur.pseudo;
-                    row.appendChild(pseudoCell);
-
-                    const cookiesCell = document.createElement("td");
-                    cookiesCell.textContent = joueur.score;
-                    row.appendChild(cookiesCell);
-
-                    classementBody.appendChild(row);
-                });
-            } else {
-                console.log("Aucun joueur trouvé dans le classement.");
-            }
-        }
-
-        // Charger le classement au démarrage
-        loadClassement();
->>>>>>> f7c84045a2a7960a3909cf659144fd79794b3083
     </script>
 </body>
 </html>
