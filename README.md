@@ -11,15 +11,15 @@ Un **Cookie Clicker** simple développé en **Node.js + Express** ! Clique, gén
 git clone https://github.com/youtube-eliot/Cookie-Clicker.git
 cd Cookie-Clicker
 ```
-###2️⃣ Installer les dépendances 📦
+### 2️⃣ Installer les dépendances 📦
 ```bash
 npm install
 ```
-###3️⃣ Lancer le serveur 🚀
+### 3️⃣ Lancer le serveur 🚀
 ```bash
 node server.js
 ```
-###4️⃣ Accéder au jeu 🌍
+### 4️⃣ Accéder au jeu 🌍
 Ouvre ton navigateur et va sur :
 ```
 http://localhost:3000
@@ -33,13 +33,16 @@ Node.js 🟢
 Express.js ⚡
 HTML / CSS / JavaScript 🎨
 
-🏗️ Fonctionnalités
+## 🏗️ Fonctionnalités
 ✔️ Clique pour générer des cookies 🍪
+
 ✔️ Achète des améliorations 🔥
+
 ✔️ Sauvegarde automatique via compte 📝
+
 ✔️ Affichage du nombre total de cookies 📊
 
-📜 Licence
+## 📜 Licence
 Projet privé pour le moment 🔒
 
-👨‍💻 Développé avec ❤️ par [Eliot](https://github.com/youtube-eliot), [CMGCPF](https://github.com/FilouzMC), [Filouz](https://github.com/CMGCPF)
+👨‍💻 **Développé avec ❤️ par [Eliot](https://github.com/youtube-eliot), [Filouz](https://github.com/FilouzMC), [CMGCPF](https://github.com/CMGCPF) **
