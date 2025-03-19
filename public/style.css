@@ -1,0 +1,206 @@
+/* Index */
+/* Styles de base */
+
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #484647;
+    /* Fond noir */
+    color: #ffffff;
+    /* Texte en blanc */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    /* Pleine hauteur de l'écran */
+}
+
+h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+#score {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+#cookie {
+    font-size: 150px;
+    /* Taille du cookie */
+    cursor: pointer;
+    user-select: none;
+    /* Empêcher la sélection du texte */
+    transition: transform 0.1s;
+    /* Animation au clic */
+    position: relative;
+    margin-bottom: 20px;
+    /* Espace entre le cookie et les boutons */
+}
+
+#cookie:active {
+    transform: scale(1.1);
+    /* Effet de zoom au clic */
+}
+
+#main-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    /* Espace entre les boutons */
+    margin-top: 20px;
+    /* Baisser les boutons */
+}
+
+#reset,
+#open-shop,
+#classement,
+#deconnexion {
+    font-size: 20px;
+    padding: 15px 30px;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+#reset {
+    background-color: #FF5733;
+}
+
+#open-shop {
+    background-color: #3a775b;
+}
+
+#classement {
+    background-color: #576613ab;
+}
+
+#deconnexion {
+    background-color: #ff3333;
+    /* Couleur rouge pour indiquer une action critique */
+}
+
+#reset:active,
+#open-shop:active,
+#deconnexion:active {
+    transform: scale(1.1);
+}
+
+.plus-one {
+    position: absolute;
+    font-size: 24px;
+    color: #ffffff;
+    /* Couleur du texte +1 */
+    animation: floatUp 1s ease-out forwards;
+}
+
+#user-info {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 18px;
+    background-color: rgba(255, 255, 255, 0.1);
+    /* Fond semi-transparent */
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#user-menu {
+    display: none;
+    position: absolute;
+    top: 50px;
+    left: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#user-menu button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #ff3333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#user-menu button:hover {
+    background-color: #cc0000;
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+}
+
+/* Shop */
+/* Styles de la boutique */
+
+.shop-item {
+    background-color: #333333;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 10px;
+    width: 300px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.shop-item:hover {
+    transform: scale(1.05);
+}
+.shop-item:active {
+    transform: scale(0.95);
+}
+.shop-item h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+.shop-item p {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+.shop-item button {
+    font-size: 16px;
+    padding: 10px 20px;
+    color: white;
+    background-color: #3498db;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.shop-item button:disabled {
+    background-color: #777777;
+    cursor: not-allowed;
+}
+#back-button {
+    font-size: 20px;
+    padding: 15px 30px;
+    margin: 20px;
+    color: white;
+    background-color: #FF5733;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+#current-score {
+    font-size: 24px;
+    margin-bottom: 20px;
+}

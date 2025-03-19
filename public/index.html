@@ -9,162 +9,7 @@
 </head>
 
 <body>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #484647;
-            /* Fond noir */
-            color: #ffffff;
-            /* Texte en blanc */
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            /* Pleine hauteur de l'écran */
-            position: relative;
-            /* Pour positionner le bouton classement en bas */
-        }
-
-        h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-
-        #score {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        #cookie {
-            font-size: 150px;
-            /* Taille du cookie */
-            cursor: pointer;
-            user-select: none;
-            /* Empêcher la sélection du texte */
-            transition: transform 0.1s;
-            /* Animation au clic */
-            position: relative;
-            margin-bottom: 20px;
-            /* Espace entre le cookie et les boutons */
-        }
-
-        #cookie:active {
-            transform: scale(1.1);
-            /* Effet de zoom au clic */
-        }
-
-        #main-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            /* Espace entre les boutons */
-            margin-top: 20px;
-            /* Baisser les boutons */
-        }
-
-        #reset,
-        #open-shop,
-        #classement,
-        #deconnexion {
-            font-size: 20px;
-            padding: 15px 30px;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-
-        #reset {
-            background-color: #FF5733;
-        }
-
-        #open-shop {
-            background-color: #3a775b;
-        }
-
-        #classement {
-            background-color: #576613ab;
-        }
-
-        #deconnexion {
-            background-color: #ff3333;
-            /* Couleur rouge pour indiquer une action critique */
-        }
-
-        #reset:active,
-        #open-shop:active,
-        #deconnexion:active {
-            transform: scale(1.1);
-        }
-
-        .plus-one {
-            position: absolute;
-            font-size: 24px;
-            color: #ffffff;
-            /* Couleur du texte +1 */
-            animation: floatUp 1s ease-out forwards;
-        }
-
-        #user-info {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 18px;
-            background-color: rgba(255, 255, 255, 0.1);
-            /* Fond semi-transparent */
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        #user-menu {
-            display: none;
-            position: absolute;
-            top: 50px;
-            left: 10px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            padding: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        #user-menu button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            background-color: #ff3333;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        #user-menu button:hover {
-            background-color: #cc0000;
-        }
-
-        @keyframes floatUp {
-            0% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-            100% {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-        }
-    </style>
-    </head>
-
-    <body>
+    <div>
         <!-- Affiche du pseudo de l'utilisateur connecté avec menu déroulant -->
         <div id="user-info" onclick="toggleMenu()">
             Connecté en tant que : <span id="username"></span>
@@ -187,164 +32,162 @@
 
         <!-- Bouton Classement en bas -->
         <button id="classement" onclick="window.location.href='classement.html'">Classement - Soon</button>
+    </div>
 
-        <script src="script.js"></script>
-    </body>
+    <script>
+        let count = 0;
+        let multiplier = 1; // Multiplicateur initial à 0.5 au lieu de 1
+        let autoclickerEnabled = false; // Autoclicker désactivé par défaut
 
-<script>
-    let count = 0;
-    let multiplier = 1; // Multiplicateur initial à 0.5 au lieu de 1
-    let autoclickerEnabled = false; // Autoclicker désactivé par défaut
-
-    // Vérifier si l'utilisateur est connecté
-    async function checkAuth() {
-        const response = await fetch('/check-auth');
-        const data = await response.json();
-        if (!data.authenticated) {
-            window.location.href = '/login.html';
-        } else {
-            // Afficher le pseudo de l'utilisateur connecté
-            document.getElementById('username').textContent = data.nom_utilisateur;
-        }
-    }
-
-    // Charger le score au démarrage
-    async function loadScore() {
-        const response = await fetch("/score");
-        const data = await response.json();
-        if (data.score !== undefined) {
-            count = data.score;
-            document.getElementById("count").textContent = count;
-        }
-    }
-
-    // Charger les améliorations au démarrage
-    async function loadUpgrades() {
-        const response = await fetch("/upgrades");
-        const data = await response.json();
-        if (data.multiplier !== undefined && data.autoclicker !== undefined) {
-            multiplier = data.multiplier;
-            autoclickerEnabled = data.autoclicker === 1;
-        }
-    }
-
-    // Gestion du clic sur le cookie
-    document.getElementById("cookie").addEventListener("click", async function (event) {
-        const response = await fetch("/click", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ multiplier: 1 }), // Envoyer 0.5 comme multiplicateur
-        });
-        const data = await response.json();
-        if (data.score !== undefined) {
-            count = data.score;
-            document.getElementById("count").textContent = count;
+        // Vérifier si l'utilisateur est connecté
+        async function checkAuth() {
+            const response = await fetch('/check-auth');
+            const data = await response.json();
+            if (!data.authenticated) {
+                window.location.href = '/login.html';
+            } else {
+                // Afficher le pseudo de l'utilisateur connecté
+                document.getElementById('username').textContent = data.nom_utilisateur;
+            }
         }
 
-        // Créer un élément +0.5
-        const plusOne = document.createElement("div");
-        plusOne.textContent = `1`; // Afficher +0.5 au lieu de +1
-        plusOne.classList.add("plus-one");
+        // Charger le score au démarrage
+        async function loadScore() {
+            const response = await fetch("/score");
+            const data = await response.json();
+            if (data.score !== undefined) {
+                count = data.score;
+                document.getElementById("count").textContent = count;
+            }
+        }
 
-        // Positionner l'élément +0.5 à l'endroit du clic
-        const rect = event.target.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-        plusOne.style.left = `${x}px`;
-        plusOne.style.top = `${y}px`;
+        // Charger les améliorations au démarrage
+        async function loadUpgrades() {
+            const response = await fetch("/upgrades");
+            const data = await response.json();
+            if (data.multiplier !== undefined && data.autoclicker !== undefined) {
+                multiplier = data.multiplier;
+                autoclickerEnabled = data.autoclicker === 1;
+            }
+        }
 
-        // Ajouter l'élément +0.5 au cookie
-        event.target.appendChild(plusOne);
-
-        // Supprimer l'élément +0.5 après l'animation
-        plusOne.addEventListener("animationend", () => {
-            plusOne.remove();
-        });
-    });
-
-    // Gestion de l'autoclicker
-    if (autoclickerEnabled) {
-        setInterval(async function () {
+        // Gestion du clic sur le cookie
+        document.getElementById("cookie").addEventListener("click", async function (event) {
             const response = await fetch("/click", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ multiplier: 1 }), // Envoyer 1 comme multiplicateur
+                body: JSON.stringify({ multiplier: 1 }), // Envoyer 0.5 comme multiplicateur
             });
             const data = await response.json();
             if (data.score !== undefined) {
                 count = data.score;
                 document.getElementById("count").textContent = count;
             }
-        }, 5000); // Clique toutes les 5 secondes
-    }
 
-    // Réinitialisation avec avertissement
-    document.getElementById("reset").addEventListener("click", async function () {
-        // Afficher une fenêtre d'avertissement
-        const confirmReset = confirm("Êtes-vous sûr de vouloir réinitialiser le jeu ? Toutes vos données seront perdues.");
+            // Créer un élément +0.5
+            const plusOne = document.createElement("div");
+            plusOne.textContent = `1`; // Afficher +0.5 au lieu de +1
+            plusOne.classList.add("plus-one");
 
-        // Si l'utilisateur confirme, réinitialiser le jeu
-        if (confirmReset) {
-            const response = await fetch("/reset", { method: "POST" });
-            const data = await response.json();
-            if (data.success) {
-                count = 0;
-                multiplier = 1; // Réinitialiser le multiplicateur à 1
-                autoclickerEnabled = false;
+            // Positionner l'élément +0.5 à l'endroit du clic
+            const rect = event.target.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            plusOne.style.left = `${x}px`;
+            plusOne.style.top = `${y}px`;
 
-                // Mettre à jour l'affichage
-                document.getElementById("count").textContent = count;
+            // Ajouter l'élément +0.5 au cookie
+            event.target.appendChild(plusOne);
 
-                alert("Jeu réinitialisé !");
+            // Supprimer l'élément +0.5 après l'animation
+            plusOne.addEventListener("animationend", () => {
+                plusOne.remove();
+            });
+        });
+
+        // Gestion de l'autoclicker
+        if (autoclickerEnabled) {
+            setInterval(async function () {
+                const response = await fetch("/click", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ multiplier: 1 }), // Envoyer 1 comme multiplicateur
+                });
+                const data = await response.json();
+                if (data.score !== undefined) {
+                    count = data.score;
+                    document.getElementById("count").textContent = count;
+                }
+            }, 5000); // Clique toutes les 5 secondes
+        }
+
+        // Réinitialisation avec avertissement
+        document.getElementById("reset").addEventListener("click", async function () {
+            // Afficher une fenêtre d'avertissement
+            const confirmReset = confirm("Êtes-vous sûr de vouloir réinitialiser le jeu ? Toutes vos données seront perdues.");
+
+            // Si l'utilisateur confirme, réinitialiser le jeu
+            if (confirmReset) {
+                const response = await fetch("/reset", { method: "POST" });
+                const data = await response.json();
+                if (data.success) {
+                    count = 0;
+                    multiplier = 1; // Réinitialiser le multiplicateur à 1
+                    autoclickerEnabled = false;
+
+                    // Mettre à jour l'affichage
+                    document.getElementById("count").textContent = count;
+
+                    alert("Jeu réinitialisé !");
+                }
+            }
+        });
+
+        // Gestion de la déconnexion
+        async function deconnecter() {
+            const response = await fetch('/deconnexion', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            const result = await response.json();
+            if (response.ok) {
+                // Rediriger vers la page de connexion après la déconnexion
+                window.location.href = '/login.html';
+            } else {
+                alert('Erreur lors de la déconnexion');
             }
         }
-    });
 
-    // Gestion de la déconnexion
-    async function deconnecter() {
-        const response = await fetch('/deconnexion', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+        // Afficher ou masquer le menu déroulant
+        function toggleMenu() {
+            const menu = document.getElementById("user-menu");
+            if (menu.style.display === "block") {
+                menu.style.display = "none";
+            } else {
+                menu.style.display = "block";
+            }
+        }
+
+        // Fermer le menu déroulant si on clique en dehors
+        document.addEventListener("click", function (event) {
+            const userInfo = document.getElementById("user-info");
+            const userMenu = document.getElementById("user-menu");
+            if (event.target !== userInfo && !userInfo.contains(event.target) && event.target !== userMenu && !userMenu.contains(event.target)) {
+                userMenu.style.display = "none";
+            }
         });
-        const result = await response.json();
-        if (response.ok) {
-            // Rediriger vers la page de connexion après la déconnexion
-            window.location.href = '/login.html';
-        } else {
-            alert('Erreur lors de la déconnexion');
+
+        // Vérifier l'authentification avant de charger la page
+        checkAuth();
+
+        // Charger le score et les améliorations au démarrage
+        async function init() {
+            await loadScore();
+            await loadUpgrades();
         }
-    }
 
-    // Afficher ou masquer le menu déroulant
-    function toggleMenu() {
-        const menu = document.getElementById("user-menu");
-        if (menu.style.display === "block") {
-            menu.style.display = "none";
-        } else {
-            menu.style.display = "block";
-        }
-    }
-
-    // Fermer le menu déroulant si on clique en dehors
-    document.addEventListener("click", function (event) {
-        const userInfo = document.getElementById("user-info");
-        const userMenu = document.getElementById("user-menu");
-        if (event.target !== userInfo && !userInfo.contains(event.target) && event.target !== userMenu && !userMenu.contains(event.target)) {
-            userMenu.style.display = "none";
-        }
-    });
-
-    // Vérifier l'authentification avant de charger la page
-    checkAuth();
-
-    // Charger le score et les améliorations au démarrage
-    async function init() {
-        await loadScore();
-        await loadUpgrades();
-    }
-
-    init();
-</script>
+        init();
+    </script>
 </body>
 
 </html>
