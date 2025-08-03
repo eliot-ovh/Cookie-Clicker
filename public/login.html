@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -127,7 +126,6 @@
                 opacity: 0;
                 transform: translateY(-20px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -135,7 +133,6 @@
         }
     </style>
 </head>
-
 <body>
     <div class="container">
         <h1>Bienvenue</h1>
@@ -144,22 +141,18 @@
             <h2>Inscription</h2>
             <form id="formInscription">
                 <label for="nom_utilisateur">Nom d'utilisateur :</label>
-                <input type="text" id="nom_utilisateur" name="nom_utilisateur" placeholder="Entrez votre pseudo"
-                    required>
+                <input type="text" id="nom_utilisateur" name="nom_utilisateur" placeholder="Entrez votre pseudo" required>
                 <label for="mot_de_passe">Mot de passe :</label>
-                <input type="password" id="mot_de_passe" name="mot_de_passe" placeholder="Entrez votre mot de passe"
-                    required>
+                <input type="password" id="mot_de_passe" name="mot_de_passe" placeholder="Entrez votre mot de passe" required>
                 <button type="submit">S'inscrire</button>
             </form>
 
             <h2>Connexion</h2>
             <form id="formConnexion">
                 <label for="nom_utilisateur_connexion">Nom d'utilisateur :</label>
-                <input type="text" id="nom_utilisateur_connexion" name="nom_utilisateur"
-                    placeholder="Entrez votre pseudo" required>
+                <input type="text" id="nom_utilisateur_connexion" name="nom_utilisateur" placeholder="Entrez votre pseudo" required>
                 <label for="mot_de_passe_connexion">Mot de passe :</label>
-                <input type="password" id="mot_de_passe_connexion" name="mot_de_passe"
-                    placeholder="Entrez votre mot de passe" required>
+                <input type="password" id="mot_de_passe_connexion" name="mot_de_passe" placeholder="Entrez votre mot de passe" required>
                 <button type="submit">Se connecter</button>
             </form>
         </div>
@@ -205,8 +198,6 @@
                 afficherMessage(result.message, 'error');
             }
         });
-
     </script>
 </body>
-
 </html>

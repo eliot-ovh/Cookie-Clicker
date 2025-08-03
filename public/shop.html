@@ -3,95 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop - Cookie Clicker</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Boutique</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #484647; /* Fond noir */
+            color: #ffffff; /* Texte en blanc */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        #score {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .shop-item {
+            background-color: #3a775b;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .shop-item:hover {
+            transform: scale(1.05);
+        }
+        #back-button {
+            font-size: 20px;
+            padding: 15px 30px;
+            margin: 20px;
+            color: white;
+            background-color: #FF5733;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <h1>Boutique d'Améliorations 🛒</h1>
+    <h1>Boutique 🛒</h1>
+    <div id="score">Nombre de Cookies : <span id="count">0</span></div>
 
-    <!-- Affichage du score actuel -->
-    <div id="current-score">Votre score : <span id="score">0</span></div>
-
-    <!-- Amélioration : Multiplicateur de clics -->
-    <div class="shop-item" id="multiplier-upgrade">
-        <h2>Multiplicateur de Clics</h2>
-        <p>Augmentez votre multiplicateur de clics par 2.</p>
-        <p>Prix : <span id="multiplier-price">900</span> 🍪</p>
-        <button id="buy-multiplier">Acheter</button>
+    <!-- Articles de la boutique -->
+    <div class="shop-item" id="multiplier">
+        <h2>Multiplicateur x2</h2>
+        <p>Coût : 900 cookies</p>
     </div>
 
-    <!-- Amélioration : Autoclicker -->
-    <div class="shop-item" id="autoclicker-upgrade">
+    <div class="shop-item" id="autoclicker">
         <h2>Autoclicker</h2>
-        <p>Activez un autoclicker qui clique automatiquement toutes les 5 secondes.</p>
-        <p>Prix : <span id="autoclicker-price">75</span> 🍪</p>
-        <button id="buy-autoclicker">Acheter</button>
+        <p>Coût : 75 cookies</p>
     </div>
-    <!-- Bouton pour retourner au jeu -->
-    <button id="back-button" onclick="window.location.href='index.html'">Retour au Jeu</button>
+
+    <!-- Bouton pour retourner à l'index -->
+    <button id="back-button" onclick="window.location.href='index.html'">Retour</button>
 
     <script>
-        // Récupérer les données depuis le localStorage
-        let count = localStorage.getItem("clickerScore") ? parseInt(localStorage.getItem("clickerScore")) : 0;
-        let multiplier = localStorage.getItem("clickerMultiplier") ? parseInt(localStorage.getItem("clickerMultiplier")) : 1;
-        let autoclickerEnabled = localStorage.getItem("autoclickerEnabled") === "true";
+        let count = 0;
 
-        // Récupérer le prix actuel du multiplicateur depuis le localStorage
-        let multiplierPrice = localStorage.getItem("multiplierPrice") ? parseInt(localStorage.getItem("multiplierPrice")) : 50;
-        let autoclickerPrice = 75; // Le prix de l'autoclicker reste fixe
-
-        // Afficher le score actuel
-        document.getElementById("score").textContent = count;
-
-        // Mettre à jour les prix affichés
-        document.getElementById("multiplier-price").textContent = multiplierPrice;
-        document.getElementById("autoclicker-price").textContent = autoclickerPrice;
-
-        // Gestion de l'achat du multiplicateur
-        document.getElementById("buy-multiplier").addEventListener("click", function() {
-            if (count >= multiplierPrice) {
-                count -= multiplierPrice;
-                multiplier *= 2; // Double le multiplicateur
-                multiplierPrice *= 2; // Double le prix pour la prochaine amélioration
-
-                // Mettre à jour le localStorage
-                localStorage.setItem("clickerScore", count);
-                localStorage.setItem("clickerMultiplier", multiplier);
-                localStorage.setItem("multiplierPrice", multiplierPrice);
-
-                // Mettre à jour l'affichage
-                document.getElementById("score").textContent = count;
-                document.getElementById("multiplier-price").textContent = multiplierPrice;
-                alert("Multiplicateur de clics amélioré !");
-            } else {
-                alert("Vous n'avez pas assez de cookies !");
+        // Charger le score au démarrage
+        async function loadScore() {
+            const response = await fetch("/score");
+            const data = await response.json();
+            if (data.score !== undefined) {
+                count = data.score;
+                document.getElementById("count").textContent = count;
             }
-        });
-
-        // Gestion de l'achat de l'autoclicker
-        document.getElementById("buy-autoclicker").addEventListener("click", function() {
-            if (count >= autoclickerPrice && !autoclickerEnabled) {
-                count -= autoclickerPrice;
-                autoclickerEnabled = true;
-
-                // Mettre à jour le localStorage
-                localStorage.setItem("clickerScore", count);
-                localStorage.setItem("autoclickerEnabled", "true");
-
-                // Désactiver le bouton après l'achat
-                document.getElementById("buy-autoclicker").disabled = true;
-                alert("Autoclicker activé !");
-            } else if (autoclickerEnabled) {
-                alert("Vous avez déjà acheté l'autoclicker !");
-            } else {
-                alert("Vous n'avez pas assez de cookies !");
-            }
-        });
-
-        // Désactiver le bouton de l'autoclicker si déjà acheté
-        if (autoclickerEnabled) {
-            document.getElementById("buy-autoclicker").disabled = true;
         }
+
+        // Acheter un multiplicateur
+        document.getElementById("multiplier").addEventListener("click", async function() {
+            if (count >= 900) {
+                const response = await fetch("/buy-multiplier", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                });
+                const data = await response.json();
+                if (data.success) {
+                    count -= 900;
+                    document.getElementById("count").textContent = count;
+                    alert("Multiplicateur acheté !");
+                } else {
+                    alert("Erreur lors de l'achat du multiplicateur.");
+                }
+            } else {
+                alert("Pas assez de cookies !");
+            }
+        });
+
+        // Acheter un autoclicker
+        document.getElementById("autoclicker").addEventListener("click", async function() {
+            if (count >= 75) {
+                const response = await fetch("/buy-autoclicker", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                });
+                const data = await response.json();
+                if (data.success) {
+                    count -= 75;
+                    document.getElementById("count").textContent = count;
+                    alert("Autoclicker acheté !");
+                } else {
+                    alert("Erreur lors de l'achat de l'autoclicker.");
+                }
+            } else {
+                alert("Pas assez de cookies !");
+            }
+        });
+
+        // Charger le score au démarrage
+        loadScore();
     </script>
 </body>
 </html>

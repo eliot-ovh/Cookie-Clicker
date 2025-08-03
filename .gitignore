@@ -1,59 +1,29 @@
-# 📦 Node.js dependencies
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-
-# 🖥 Éditeurs et Environnements de Dev
-.vscode/
-.idea/
-*.code-workspace
-
-# 🏗 Build files
-dist/
-build/
-tmp/
-out/
-coverage/
+dist
+dist-*
+cabal-dev
+*.o
+*.hi
+*.hie
+*.chi
+*.chs.h
+*.dyn_o
+*.dyn_hi
+.hpc
+.hsenv
+.cabal-sandbox/
+cabal.sandbox.config
+*.prof
+*.aux
+*.hp
+*.eventlog
+.stack-work/
+cabal.project.local
+cabal.project.local~
+.HTF/
+.ghc.environment.*
 .env
-.env.local
-.env.development
-.env.test
-.env.production
-
-# 🗑️ Logs & Debugging
-logs/
-*.log
-debug.log
-*.bak
-*.swp
-*.swo
-
-# 📁 OS Files (Mac, Windows, Linux)
-.DS_Store
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-*.~lock
-
-# 🗃️ Bases de données et fichiers temporaires
-*.sqlite
-*.sqlite3
 *.db
-*.db-wal
-*.db-shm
-*.mdb
-*.accdb
-
-# 🔥 Cache files
-.cache/
-.npm/
-.terraform/
-.pnp/
-.pnp.js
-node_repl_history
+node_modules/
+ma_base_de_donnees.db
+*.db
+*.db

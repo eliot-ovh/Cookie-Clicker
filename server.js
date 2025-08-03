@@ -1,5 +1,4 @@
-﻿require('dotenv').config();
-const express = require('express');
+﻿const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const bodyParser = require('body-parser');
 const path = require('path');
@@ -8,13 +7,15 @@ const session = require('express-session');
 const app = express();
 const db = new sqlite3.Database('ma_base_de_donnees.db');
 
-// Middleware pour parser les requêtes POST
+// Middleware pour parser les données JSON
 app.use(bodyParser.json());
+
+// Middleware pour gérer les sessions
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: 'votre_secret_key',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false } // À activer si HTTPS
+    cookie: { secure: false } // À mettre à true si vous utilisez HTTPS
 }));
 
 // Servir les fichiers statiques (HTML, CSS, JS)
