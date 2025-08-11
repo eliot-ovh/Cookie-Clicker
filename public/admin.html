@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Cookie Clicker</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Admin</h1>
+        <form id="adminLoginForm">
+            <label for="adminPassword">Mot de passe admin :</label>
+            <input type="password" id="adminPassword" required>
+            <button type="submit">Connexion</button>
+        </form>
+        <div id="adminPanel" style="display:none;">
+            <h2>Panneau d'administration</h2>
+            <button class="admin-btn" onclick="resetAllScores()">Réinitialiser tous les scores</button>
+            <button class="admin-btn" onclick="maintenanceOn()">Bloquer tout le site (maintenance)</button>
+            <button class="admin-btn" onclick="maintenanceOff()">Débloquer le site</button>
+            <div id="adminMessage"></div>
+        </div>
+        <div id="message"></div>
+    </div>
+    <script>
+        // Hash SHA-256 du mot de passe admin avant envoi
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = document.getElementById('adminPassword').value;
+            const hashedPassword = await hashPassword(password);
+            const response = await fetch('/admin-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: hashedPassword })
+            });
+            const result = await response.json();
+            if (response.ok) {
+                document.getElementById('adminLoginForm').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                document.getElementById('message').textContent = '';
+            } else {
+                document.getElementById('message').textContent = result.message;
+            }
+        });
+
+        async function resetAllScores() {
+            const confirmReset = confirm("Êtes-vous sûr de vouloir réinitialiser tous les scores ?");
+            if (!confirmReset) return;
+            const response = await fetch('/admin-reset-scores', { method: 'POST' });
+            const result = await response.json();
+            document.getElementById('adminMessage').textContent = result.message;
+        }
+
+        async function maintenanceOn() {
+            await fetch('/admin/maintenance-on', { method: 'POST' });
+            alert("Le site est maintenant bloqué (maintenance)");
+        }
+
+        async function maintenanceOff() {
+            await fetch('/admin/maintenance-off', { method: 'POST' });
+            alert("Le site est débloqué !");
+        }
+    </script>
+</body>
+</html>

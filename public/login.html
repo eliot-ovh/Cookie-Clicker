@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
+    <a href="admin.html" id="admin-btn">Admin</a>
     <div class="container">
         <h1>Bienvenue</h1>
 
@@ -26,6 +27,10 @@
                 <input type="text" id="nom_utilisateur_connexion" name="nom_utilisateur" placeholder="Entrez votre pseudo" required>
                 <label for="mot_de_passe_connexion">Mot de passe :</label>
                 <input type="password" id="mot_de_passe_connexion" name="mot_de_passe" placeholder="Entrez votre mot de passe" required>
+                <label>
+                    <input type="checkbox" id="rememberMe" name="rememberMe">
+                    Se souvenir de moi
+                </label>
                 <button type="submit">Se connecter</button>
             </form>
         </div>
@@ -58,14 +63,15 @@
         document.getElementById('formConnexion').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
+            const body = Object.fromEntries(formData);
+            body.rememberMe = document.getElementById('rememberMe').checked;
             const response = await fetch('/connexion', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(Object.fromEntries(formData)),
+                body: JSON.stringify(body),
             });
             const result = await response.json();
             if (response.ok) {
-                // Rediriger vers index.html après une connexion réussie
                 window.location.href = 'index.html';
             } else {
                 afficherMessage(result.message, 'error');

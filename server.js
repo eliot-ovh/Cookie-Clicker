@@ -7,6 +7,31 @@ const session = require('express-session');
 const app = express();
 const db = new sqlite3.Database('ma_base_de_donnees.db');
 
+// === ICI TON MIDDLEWARE MAINTENANCE ===
+app.use((req, res, next) => {
+    db.get('SELECT enabled FROM maintenance', (err, row) => {
+        if (err) {
+            console.error('[MAINTENANCE] Erreur SQLite :', err);
+            return next();
+        }
+        const blocked = [
+            '/index.html', '/index',
+            '/shop.html', '/shop',
+            '/classement.html', '/classement'
+        ];
+        if (
+            row && row.enabled === 1 &&
+            blocked.includes(req.path) &&
+            req.path !== '/soon.html' &&
+            !req.path.startsWith('/admin')
+        ) {
+            console.log(`[MAINTENANCE] Redirection ${req.path} vers /soon.html`);
+            return res.redirect('/soon.html');
+        }
+        next();
+    });
+});
+
 // Middleware pour parser les données JSON
 app.use(bodyParser.json());
 
@@ -38,6 +63,60 @@ db.serialize(() => {
         } else {
             console.log("Table utilisateurs prête.");
         }
+    });
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS pages_soon (
+            page TEXT PRIMARY KEY
+        )
+    `, (err) => {
+        if (err) {
+            console.error("Erreur lors de la création de la table pages_soon :", err);
+        } else {
+            console.log("Table pages_soon prête.");
+        }
+    });
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS maintenance (
+            enabled INTEGER DEFAULT 0
+        )
+    `, (err) => {
+        if (err) {
+            console.error("Erreur lors de la création de la table maintenance :", err);
+        } else {
+            console.log("Table maintenance prête.");
+        }
+    });
+});
+
+// --- ADMIN SIMPLE ---
+const ADMIN_PASSWORD_HASH = "f82addfaee78077ad97b4cdc3daf509842a1c162e2649471fb25263153f7de42"; // Remplace par le vrai hash
+
+// Auth admin (session simple)
+app.post('/admin-login', (req, res) => {
+    const { password } = req.body; // password est déjà hashé côté client
+    if (password === ADMIN_PASSWORD_HASH) {
+        req.session.isAdmin = true;
+        res.json({ success: true });
+    } else {
+        res.status(401).json({ message: "Mot de passe incorrect" });
+    }
+});
+
+// Middleware admin
+function isAdmin(req, res, next) {
+    if (req.session.isAdmin) next();
+    else res.status(403).json({ message: "Accès refusé" });
+}
+
+// Réinitialiser tous les scores
+app.post('/admin-reset-scores', isAdmin, (req, res) => {
+    db.run('UPDATE utilisateurs SET score = 0', (err) => {
+        if (err) {
+            return res.status(500).json({ message: "Erreur lors de la réinitialisation" });
+        }
+        res.json({ message: "Tous les scores ont été réinitialisés !" });
     });
 });
 
@@ -72,7 +151,7 @@ app.post('/inscription', async (req, res) => {
 
 // Route pour la connexion
 app.post('/connexion', async (req, res) => {
-    const { nom_utilisateur, mot_de_passe } = req.body;
+    const { nom_utilisateur, mot_de_passe, rememberMe } = req.body;
 
     if (!nom_utilisateur || !mot_de_passe) {
         return res.status(400).json({ message: 'Nom d\'utilisateur et mot de passe requis' });
@@ -86,8 +165,15 @@ app.post('/connexion', async (req, res) => {
                 return res.status(400).json({ message: 'Nom d\'utilisateur ou mot de passe incorrect' });
             }
 
-            // Créer une session pour l'utilisateur
             req.session.user = row.pseudo;
+
+            // Si "Se souvenir de moi" est coché, session 30 jours, sinon session par défaut (ex: 2h)
+            if (rememberMe) {
+                req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 30; // 30 jours
+            } else {
+                req.session.cookie.maxAge = 1000 * 60 * 60 * 2; // 2 heures
+            }
+
             res.json({ message: 'Connexion réussie', nom_utilisateur: row.pseudo });
         }
     );
@@ -366,8 +452,91 @@ app.get('/soon', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'soon.html'));
 });
 
+// Activer le mode "soon" sur une page
+app.post('/admin/soon', isAdmin, (req, res) => {
+    const { page } = req.body;
+    db.run('INSERT OR IGNORE INTO pages_soon (page) VALUES (?)', [page], (err) => {
+        if (err) return res.status(500).json({ message: "Erreur lors de l'activation" });
+        res.json({ message: `La page ${page} est maintenant redirigée vers soon.html` });
+    });
+});
+
+// Désactiver le mode "soon" sur une page
+app.post('/admin/unssoon', isAdmin, (req, res) => {
+    const { page } = req.body;
+    db.run('DELETE FROM pages_soon WHERE page = ?', [page], (err) => {
+        if (err) return res.status(500).json({ message: "Erreur lors de la désactivation" });
+        res.json({ message: `La page ${page} est maintenant accessible normalement` });
+    });
+});
+
+// Lister les pages en mode soon
+app.get('/admin/soon-list', isAdmin, (req, res) => {
+    db.all('SELECT page FROM pages_soon', (err, rows) => {
+        if (err) return res.status(500).json({ message: "Erreur lors de la récupération" });
+        res.json({ pages: rows.map(r => r.page) });
+    });
+});
+
+// Activer le mode maintenance
+app.post('/admin/maintenance-on', isAdmin, (req, res) => {
+    console.log('[ADMIN] Activation maintenance');
+    db.run('UPDATE maintenance SET enabled = 1', (err) => {
+        if (err) {
+            console.error('[ADMIN] Erreur activation maintenance :', err);
+            return res.status(500).json({ message: "Erreur activation maintenance" });
+        }
+        res.json({ message: "Le site est maintenant en maintenance (soon.html)" });
+    });
+});
+
+// Désactiver le mode maintenance
+app.post('/admin/maintenance-off', isAdmin, (req, res) => {
+    console.log('[ADMIN] Désactivation maintenance');
+    db.run('UPDATE maintenance SET enabled = 0', (err) => {
+        if (err) {
+            console.error('[ADMIN] Erreur désactivation maintenance :', err);
+            return res.status(500).json({ message: "Erreur désactivation maintenance" });
+        }
+        res.json({ message: "Le site est de nouveau accessible" });
+    });
+});
+
 // Démarrer le serveur
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Serveur démarré sur http://localhost:${PORT}`);
 });
+
+// --- CODE COTÉ CLIENT POUR ADMIN ---
+
+async function setSoon() {
+    const page = document.getElementById('soonPageInput').value.trim();
+    if (!page) return;
+    await fetch('/admin/soon', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ page })
+    });
+    loadSoonList();
+}
+
+async function unsetSoon() {
+    const page = document.getElementById('soonPageInput').value.trim();
+    if (!page) return;
+    await fetch('/admin/unssoon', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ page })
+    });
+    loadSoonList();
+}
+
+async function loadSoonList() {
+    const res = await fetch('/admin/soon-list');
+    const data = await res.json();
+    document.getElementById('soonList').innerHTML =
+        "<b>Pages redirigées :</b> " + (data.pages.length ? data.pages.join(', ') : "Aucune");
+}
+
+// Appelle loadSoonList() quand le panneau admin s'affiche

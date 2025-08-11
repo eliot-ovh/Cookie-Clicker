@@ -4,26 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cookie Clicker</title>
+    <link rel="stylesheet" href="styles/main.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #484647; /* Fond noir */
-            color: #ffffff; /* Texte en blanc */
-            margin: 0;
-            padding: 0;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh; /* Pleine hauteur de l'écran */
+            background: var(--background, #484647);
+        }
+        .soon-message {
+            background: linear-gradient(120deg, #6366f1 60%, #a5b4fc 100%);
+            border-radius: 18px;
+            padding: 48px 38px 38px 38px;
+            box-shadow: 0 4px 24px #0002;
+            color: #fff;
+            margin: 0;
+            text-align: center;
+            font-size: 2.2rem;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+            position: relative;
+        }
+        .soon-message::before {
+            content: "🚧";
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 18px;
+        }
+        .soon-sub {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-top: 18px;
+            color: #e0e7ff;
+            letter-spacing: 0;
         }
     </style>
 </head>
 <body>
-        <!-- Bouton pour retourner au jeu -->
-        <button id="back-button" onclick="window.location.href='/'">Retour au Jeu</button>
-    <h1>Cette page est en maintenance merci de revenir plus tard !</h1>
-    </script>
+    <div class="soon-message">
+        Le site est en maintenance
+        <span class="soon-sub">Merci de repasser plus tard.</span>
+    </div>
 </body>
 </html>
