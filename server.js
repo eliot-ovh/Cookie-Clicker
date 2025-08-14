@@ -131,15 +131,15 @@ app.post('/inscription', (req, res) => {
 
 // Connexion
 app.post('/connexion', (req, res) => {
-    const { pseudo, mot_de_passe } = req.body;
+    const { nom_utilisateur, mot_de_passe } = req.body;
 
-    if (!pseudo || !mot_de_passe) {
+    if (!nom_utilisateur || !mot_de_passe) {
         return res.status(400).json({ message: 'Nom d\'utilisateur et mot de passe requis' });
     }
 
     db.get(
         'SELECT * FROM utilisateurs WHERE pseudo = ? AND mot_de_passe = ?',
-        [pseudo, mot_de_passe],
+        [nom_utilisateur, mot_de_passe],
         (err, row) => {
             if (err || !row) {
                 return res.status(400).json({ message: 'Nom d\'utilisateur ou mot de passe incorrect' });
