@@ -36,11 +36,11 @@ HTML / CSS / JavaScript 🎨
 ## 🏗️ Fonctionnalités
 ✔️ Clique pour générer des cookies 🍪
 
-✔️ Achète des améliorations 🔥
+✔️ Achète des améliorations 🔥 *In Dev*
 
 ✔️ Sauvegarde automatique via compte 📝
 
-✔️ Affichage du nombre total de cookies 📊
+✔️ Classement de tout les joueurs ! 📊
 
 ## 📜 Licence
 Projet privé pour le moment 🔒
