@@ -45,4 +45,4 @@ HTML / CSS / JavaScript 🎨
 ## 📜 Licence
 Projet privé pour le moment 🔒
 
-👨‍💻 **Développé avec ❤️ par [Eliot](https://github.com/youtube-eliot), [Filouz](https://github.com/FilouzMC), [CMGCPF](https://github.com/CMGCPF) **
+👨‍💻 Développé avec ❤️ par [Eliot](https://github.com/youtube-eliot), [Maxime](https://github.com/FilouzMC)
