@@ -7,7 +7,14 @@
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
-    <h1>Classement - ⚠️ Dev en cours ⚠️</h1>
+    <h1>Classement des meilleurs joueurs</h1>
+        <style>
+            .top1 { background: linear-gradient(90deg, #fcd34d 60%, #fbbf24 100%) !important; color: #222; font-size: 1.3rem; font-weight: bold; }
+            .top2 { background: linear-gradient(90deg, #e5e7eb 60%, #d1d5db 100%) !important; color: #222; }
+            .top3 { background: linear-gradient(90deg, #fca5a5 60%, #f87171 100%) !important; color: #222; }
+            .classement-row { animation: fadeInUp 0.7s; }
+            @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        </style>
 
     <!-- Tableau de classement -->
     <table id="classement-table">
@@ -29,19 +36,25 @@
     <script>
         // Fonction pour charger le classement
         async function loadClassement() {
-            const response = await fetch("/classement");
+            const response = await fetch("/classement-data");
             const data = await response.json();
 
+            const classementBody = document.getElementById("classement-body");
+            classementBody.innerHTML = "";
             if (data.classement && data.classement.length > 0) {
-                const classementBody = document.getElementById("classement-body");
-                classementBody.innerHTML = ""; // Vider le tableau avant de le remplir
-
-                // Ajouter chaque joueur au tableau
                 data.classement.forEach((joueur, index) => {
                     const row = document.createElement("tr");
+                    row.classList.add("classement-row");
+                    if (index === 0) row.classList.add("top1");
+                    if (index === 1) row.classList.add("top2");
+                    if (index === 2) row.classList.add("top3");
 
                     const positionCell = document.createElement("td");
-                    positionCell.textContent = index + 1; // Position (1, 2, 3, ...)
+                    let medal = "";
+                    if (index === 0) medal = "🥇 ";
+                    if (index === 1) medal = "🥈 ";
+                    if (index === 2) medal = "🥉 ";
+                    positionCell.textContent = medal + (index + 1);
                     row.appendChild(positionCell);
 
                     const pseudoCell = document.createElement("td");
@@ -55,7 +68,13 @@
                     classementBody.appendChild(row);
                 });
             } else {
-                console.log("Aucun joueur trouvé dans le classement.");
+                const row = document.createElement("tr");
+                const cell = document.createElement("td");
+                cell.colSpan = 3;
+                cell.textContent = "Aucun joueur trouvé dans le classement.";
+                cell.style.textAlign = "center";
+                row.appendChild(cell);
+                classementBody.appendChild(row);
             }
         }
 

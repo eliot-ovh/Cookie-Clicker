@@ -445,6 +445,53 @@ app.get('/classement-data', (req, res) => {
     }
 });
 
+// Actualisation du cache classement (admin)
+app.post('/admin-refresh-classement', isAdmin, (req, res) => {
+    db.all('SELECT pseudo, score FROM utilisateurs ORDER BY score DESC', (err, rows) => {
+        if (err) {
+            return res.status(500).json({ message: "Erreur lors de la récupération du classement." });
+        }
+        fs.writeFileSync(classementFile, JSON.stringify(rows, null, 2));
+        res.json({ message: "Classement actualisé !" });
+    });
+});
+
+// Liste des joueurs
+app.get('/admin-list-players', isAdmin, (req, res) => {
+    db.all('SELECT pseudo, score FROM utilisateurs ORDER BY score DESC', (err, rows) => {
+        if (err) return res.status(500).json({ message: "Erreur lors de la récupération des joueurs." });
+        res.json({ players: rows });
+    });
+});
+
+// Remettre le score d'un joueur à 0
+app.post('/admin-reset-player-score', isAdmin, (req, res) => {
+    const { pseudo } = req.body;
+    db.run('UPDATE utilisateurs SET score = 0 WHERE pseudo = ?', [pseudo], function(err) {
+        if (err) return res.status(500).json({ message: "Erreur lors de la remise à zéro." });
+        res.json({ message: `Score de ${pseudo} remis à 0.` });
+    });
+});
+
+// Supprimer un joueur
+app.post('/admin-delete-player', isAdmin, (req, res) => {
+    const { pseudo } = req.body;
+    db.run('DELETE FROM utilisateurs WHERE pseudo = ?', [pseudo], function(err) {
+        if (err) return res.status(500).json({ message: "Erreur lors de la suppression." });
+        res.json({ message: `Joueur ${pseudo} supprimé.` });
+    });
+});
+
+// Route pour le classement (frontend)
+app.get('/classement', (req, res) => {
+    if (fs.existsSync(classementFile)) {
+        const data = fs.readFileSync(classementFile);
+        res.json({ classement: JSON.parse(data) });
+    } else {
+        res.json({ classement: [] });
+    }
+});
+
 // Start serveur
 const PORT = 3000;
 app.listen(PORT, () => {

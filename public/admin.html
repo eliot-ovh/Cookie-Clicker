@@ -7,29 +7,136 @@
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Admin</h1>
-        <form id="adminLoginForm">
-            <label for="adminPassword">Mot de passe admin :</label>
-            <input type="password" id="adminPassword" required>
-            <button type="submit">Connexion</button>
-        </form>
-        <div id="adminPanel" style="display:none;">
-            <h2>Panneau d'administration</h2>
-            <button class="admin-btn" onclick="resetAllScores()">Réinitialiser tous les scores</button>
-            <button class="admin-btn" onclick="maintenanceOn()">Bloquer tout le site (maintenance)</button>
-            <button class="admin-btn" onclick="maintenanceOff()">Débloquer le site</button>
-            <div id="adminMessage"></div>
+    <div class="container" style="display: flex; min-height: 80vh;">
+        <nav id="adminSidebar" style="width:220px; background:#f4f4f7; border-radius:16px; box-shadow:0 2px 16px #e0e7ef; margin:32px 24px 32px 0; padding:24px 0; display:flex; flex-direction:column; gap:12px; display:none;">
+            <button class="sidebar-btn" onclick="showCategory('dashboard')">Dashboard</button>
+            <button class="sidebar-btn" onclick="showCategory('scores')">Scores</button>
+            <button class="sidebar-btn" onclick="showCategory('maintenance')">Maintenance</button>
+            <button class="sidebar-btn" onclick="showCategory('classement')">Classement</button>
+            <button class="sidebar-btn" onclick="showCategory('players')">Gestion des joueurs</button>
+        </nav>
+        <div style="flex:1;">
+            <h1>Admin</h1>
+            <form id="adminLoginForm">
+                <label for="adminPassword">Mot de passe admin :</label>
+                <input type="password" id="adminPassword" required>
+                <button type="submit">Connexion</button>
+            </form>
+            <div id="adminPanel" style="display:none;">
+                <div id="category-dashboard" class="admin-category">
+                    <h2>Panneau d'administration</h2>
+                    <p>Bienvenue sur le dashboard admin !</p>
+                </div>
+                <div id="category-scores" class="admin-category" style="display:none;">
+                    <h2>Scores</h2>
+                    <button class="admin-btn" onclick="resetAllScores()">Réinitialiser tous les scores</button>
+                </div>
+                <div id="category-maintenance" class="admin-category" style="display:none;">
+                    <h2>Maintenance</h2>
+                    <button class="admin-btn" onclick="maintenanceOn()">Bloquer tout le site (maintenance)</button>
+                    <button class="admin-btn" onclick="maintenanceOff()">Débloquer le site</button>
+                </div>
+                <div id="category-classement" class="admin-category" style="display:none;">
+                    <h2>Classement</h2>
+                    <button class="admin-btn" onclick="refreshClassement()">Actualiser le classement</button>
+                    <div id="adminMessage"></div>
+                </div>
+                <div id="category-players" class="admin-category" style="display:none;">
+                    <h2>Gestion des joueurs</h2>
+                    <div id="playersList">Chargement...</div>
+                </div>
+            </div>
+            <div id="message"></div>
         </div>
-        <div id="message"></div>
     </div>
+    <style>
+        .sidebar-btn {
+            background: linear-gradient(90deg, #6366f1 60%, #a5b4fc 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-size: 1.08rem;
+            font-weight: 600;
+            margin: 0 12px;
+            box-shadow: 0 2px 8px #d1d9e6;
+            cursor: pointer;
+            transition: background 0.18s, transform 0.1s, box-shadow 0.15s;
+            outline: none;
+            display: block;
+        }
+        .sidebar-btn:hover, .sidebar-btn.active {
+            background: linear-gradient(90deg, #a5b4fc 60%, #6366f1 100%);
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 4px 16px #cbd5e1;
+        }
+        .admin-category { margin-top: 24px; }
+    </style>
     <script>
-        // Hash SHA-256 du mot de passe admin avant envoi
+        function showCategory(cat) {
+            document.querySelectorAll('.admin-category').forEach(div => div.style.display = 'none');
+            document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('category-' + cat).style.display = 'block';
+            Array.from(document.querySelectorAll('.sidebar-btn')).find(btn => btn.textContent.toLowerCase().includes(cat)).classList.add('active');
+        }
+
+        // ...existing JS functions (hashPassword, loadPlayers, resetPlayerScore, deletePlayer, onAdminLogin, etc.)...
         async function hashPassword(password) {
             const encoder = new TextEncoder();
             const data = encoder.encode(password);
             const hashBuffer = await crypto.subtle.digest('SHA-256', data);
             return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function loadPlayers() {
+            const response = await fetch('/admin-list-players');
+            const data = await response.json();
+            const container = document.getElementById('playersList');
+            if (!data.players || data.players.length === 0) {
+                container.innerHTML = '<p>Aucun joueur trouvé.</p>';
+                return;
+            }
+            let html = '<table style="width:100%;max-width:500px;margin:auto;border-collapse:collapse;">';
+            html += '<tr><th>Pseudo</th><th>Score</th><th>Actions</th></tr>';
+            data.players.forEach(player => {
+                html += `<tr><td>${player.pseudo}</td><td>${player.score}</td><td>` +
+                    `<button onclick="resetPlayerScore('${player.pseudo}')">Remettre à 0</button> ` +
+                    `<button onclick="deletePlayer('${player.pseudo}')">Supprimer</button></td></tr>`;
+            });
+            html += '</table>';
+            container.innerHTML = html;
+        }
+
+        async function resetPlayerScore(pseudo) {
+            if (!confirm('Remettre le score de ' + pseudo + ' à 0 ?')) return;
+            const response = await fetch('/admin-reset-player-score', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pseudo })
+            });
+            const result = await response.json();
+            document.getElementById('adminMessage').textContent = result.message;
+            loadPlayers();
+        }
+
+        async function deletePlayer(pseudo) {
+            if (!confirm('Supprimer le joueur ' + pseudo + ' ?')) return;
+            const response = await fetch('/admin-delete-player', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pseudo })
+            });
+            const result = await response.json();
+            document.getElementById('adminMessage').textContent = result.message;
+            loadPlayers();
+        }
+
+        function onAdminLogin() {
+            document.getElementById('adminLoginForm').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('adminSidebar').style.display = 'flex';
+            document.getElementById('message').textContent = '';
+            loadPlayers();
         }
 
         document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
@@ -43,9 +150,7 @@
             });
             const result = await response.json();
             if (response.ok) {
-                document.getElementById('adminLoginForm').style.display = 'none';
-                document.getElementById('adminPanel').style.display = 'block';
-                document.getElementById('message').textContent = '';
+                onAdminLogin();
             } else {
                 document.getElementById('message').textContent = result.message;
             }
@@ -57,6 +162,12 @@
             const response = await fetch('/admin-reset-scores', { method: 'POST' });
             const result = await response.json();
             document.getElementById('adminMessage').textContent = result.message;
+        }
+
+        async function refreshClassement() {
+            const response = await fetch('/admin-refresh-classement', { method: 'POST' });
+            const result = await response.json();
+            document.getElementById('adminMessage').textContent = result.message || 'Classement actualisé !';
         }
 
         async function maintenanceOn() {

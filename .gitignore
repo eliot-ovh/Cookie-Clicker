@@ -27,3 +27,4 @@ node_modules/
 ma_base_de_donnees.db
 *.db
 *.db
+log.txt
