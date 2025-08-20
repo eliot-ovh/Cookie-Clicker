@@ -43,6 +43,5 @@ HTML / CSS / JavaScript 🎨
 ✔️ Classement de tout les joueurs ! 📊
 
 ## 📜 Licence
-Projet privé pour le moment 🔒
 
 👨‍💻 Développé avec ❤️ par [Eliot](https://github.com/youtube-eliot), [Maxime](https://github.com/FilouzMC)
